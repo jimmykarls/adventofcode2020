@@ -56,31 +56,22 @@ fn is_entry_valid2(entry: &Entry) -> bool {
     let index1 = usize::try_from(entry.min_times).unwrap() - 1;
     let index2 = usize::try_from(entry.max_times).unwrap() - 1;
 
-    // Only convert the range of interest
-    let v: Vec<char> = entry.password[0 .. index2 + 1].chars().collect();
-
-    if v.len() < index1 || v.len() < index2 {
-        return false;
-    }
-
-    let f = v[index1].to_string();
-    let s = v[index2].to_string();
+    let char_pos_1 = entry.password.as_bytes()[index1] as char;
+    let char_pos_2 = entry.password.as_bytes()[index2] as char;
 
     let mut match_counter = 0;
 
-    if f == entry.c {
+    if entry.c.contains(char_pos_1) {
         match_counter += 1;
     }
 
-    if s == entry.c {
+    if entry.c.contains(char_pos_2) {
         match_counter += 1;
     }
 
-    if match_counter == 1 {
-        return true;
-    } else {
-        return false;
-    }
+    // Statement without semicolon on the last line
+    // is the same as 'return match_counter == 1;'
+    match_counter == 1
 }
 
 pub fn solve_day2(filename: &String) {
@@ -100,6 +91,35 @@ pub fn solve_day2(filename: &String) {
     println!("Number of valid entries are {}/{}", n_valid_entries, len);
 
     /* Problem 2 */
+    /* Three ways of calculating the sum */
+
+    // Run the checker function on each entry
+    // This results in a new vector which in turn is 
+    // iterated over and summed
+    // Seems inefficient: Looping twice and constructing a new vector
+    // but is self contained, it just returns a result
+    let sum: i32 = entries
+        .iter()
+        .map(|entry| { 
+            if is_entry_valid2(&entry) {1} else {0}
+        })
+        .collect::<Vec<i32>>()
+        .iter()
+        .sum();
+    println!("Number of SUM valid entries are {}/{}", sum, len);
+
+
+    // simpler and less overhead. Just iterate once and 
+    // doesn't create a temporary vector. But need to create a
+    // variable outside of the loop.
+    let mut sum = 0;
+    entries.iter()
+           .for_each(|entry| {
+               sum += if is_entry_valid2(&entry) {1} else {0};
+            });
+    println!("Number of SUM valid entries are {}/{}", sum, len);
+    
+    // The ususal way to do it. Basically the same as above
     n_valid_entries = 0;
     for entry in &entries {
         if is_entry_valid2(&entry) {
