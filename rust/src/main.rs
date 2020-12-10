@@ -1,6 +1,7 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 fn main() {
     println!("Hello, world!");
@@ -12,6 +13,9 @@ fn main() {
     
     filename = "inputs/day3".to_string();
     day3::solve_day3(&filename);
+    
+    filename = "inputs/day4".to_string();
+    day4::solve_day4(&filename);
     
 
 }
